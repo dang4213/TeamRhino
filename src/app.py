@@ -1,18 +1,15 @@
 from flask import Flask, jsonify, request, abort
+from InvertedIndex_class import InvertedIndex
 
 app = Flask(__name__)
 
-tokenIndex = {}
+tokenIndex = InvertedIndex()
 
 @app.route("/TeamRhino/add", methods=['GET', 'POST'])
 def add_ngrams():
 	if not request.json:
 		abort(400)
-	for token in request.json['tokens']:
-		if tokenIndex[token]:
-			tokenIndex[token].append(request.json['documentMetadata']['documentID'])
-		else:
-			tokenIndex[token] = [request.json['documentMetadata']['documentID']]
+	tokenIndex.addMetadata(request.json)
 	return "Add successful!"
 
 
@@ -28,7 +25,10 @@ def get_token_metadata():
 def homepage():
 	return "Welcome to team Rhino's Indexing page"
 
+@app.route("/")
+def hello():
+	return "HELLO!"
+
 if __name__ =='__main__':
-	app.run(debug=True)
-	# app.run(debug=True, host="0.0.0.0")
+	app.run(debug=True, host="0.0.0.0")
 
