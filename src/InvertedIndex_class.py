@@ -24,6 +24,7 @@ class InvertedIndex:
 
 	params:
 		- document: parsed json object in the format:
+		  (borrowed from Team Y's specs)
 			{
 				documentMetadata: {
 					documentID: string,
@@ -61,8 +62,6 @@ class InvertedIndex:
 								 len(tokeninfo['locations'])
 								)
 
-		# t = json.dumps([store['token'] for store in document['tokens']])
-		# return "Add Successful \n %s" %(''.join(t))
 		return "Add Successful"
 
 	"""
@@ -70,6 +69,9 @@ class InvertedIndex:
 
 	params:
 		- metadata: info about the document in which a token was found 
+		
+	return: list of word occurences and the first document metadata
+			associated
 	"""
 	def createStore(self, metadata, numOccurences):
 		return [numOccurences, metadata]
@@ -82,7 +84,7 @@ class InvertedIndex:
 		- metadata: metadata to update a token 
 	"""
 	def updateIndex(self, token, metadata):
-		if metadata['documentID'] in self.indexstore[token]:
+		# if metadata['documentID'] in self.indexstore[token]:
 
 		return None
 
@@ -92,7 +94,44 @@ class InvertedIndex:
 	- returns a json list of the 50 most frequently occuring words
 	"""
 	def getStopwords(self):
-		
+
+		return None
+
+	"""
+	searchToken
+
+	- returns a json object in the format (borrowed from Team Y's specs):
+		{
+		  returnCode: int,
+		  error: string,
+		  documents: [
+			{
+			  documentID: string,
+			  wordCount: int,
+			  pageLastIndexed: datetime,
+			  importantTokenRanges: [
+				{
+				  fieldName: string,
+				  rangeStart: int,
+				  rangeEnd: int
+				}
+			  ]
+			}
+		  ],
+		  tokens: [
+			token: string,
+			ngramSize: int,
+			documentOccurences: [
+			  {
+				documentID: string,
+				locations: [int]
+			  }
+			]
+		  ]
+		}
+	"""
+	def searchToken(self, token):
+
 		return None
 
 	def verifyJSON(self, document):
