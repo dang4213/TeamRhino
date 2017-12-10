@@ -15,7 +15,10 @@ def add_ngrams():
 
 @app.route("/TeamRhino/stopwords", methods=['GET'])
 def get_stopwords():
-	return "List of stopwords"
+	return ["the", "of", "to", "a", "and", "in", "said", "for", "that", "was",
+			"on", "he", "is", "with", "at", "by", "it", "from", "as", "be",
+			"were", "an", "have", "his", "but", "has", "are", "not", "who",
+			"they"]
 
 @app.route("/TeamRhino/tokens", methods=['GET', 'POST'])
 def get_token_metadata():
@@ -27,4 +30,3 @@ def homepage():
 
 if __name__ =='__main__':
 	app.run(debug=True, host="0.0.0.0")
-
