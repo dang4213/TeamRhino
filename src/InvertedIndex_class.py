@@ -1,4 +1,5 @@
 from sets import Set
+import json
 
 """
 class InvertedIndex
@@ -17,7 +18,7 @@ class InvertedIndex:
 
 	def __init__(self):
 		self.indexstore = {}
-
+		self.stopwords = {}
 	"""
 	addMetadata
 
@@ -47,13 +48,22 @@ class InvertedIndex:
 	return: none
 	"""
 	def addMetadata(self, document):
-		print "Hello!"
+		if not self.verifyJSON(document):
+			return "Incorrect submission format"
+		# return document['documentMetadata']['documentID']
+
 		for tokeninfo in document['tokens']:
 			if tokeninfo['token'] in self.indexstore:
 				self.updateIndex(tokeninfo['token'], document)
 			else:
-				self.updateIndex[tokeninfo['token']] = \
-				self.createStore(document['documentMetadata'])
+				self.indexstore[tokeninfo['token']] = \
+				self.createStore(document['documentMetadata'], \
+								 len(tokeninfo['locations'])
+								)
+
+		# t = json.dumps([store['token'] for store in document['tokens']])
+		# return "Add Successful \n %s" %(''.join(t))
+		return "Add Successful"
 
 	"""
 	createStore
@@ -61,8 +71,8 @@ class InvertedIndex:
 	params:
 		- metadata: info about the document in which a token was found 
 	"""
-	def createStore(self, metadata):
-		return None
+	def createStore(self, metadata, numOccurences):
+		return [numOccurences, metadata]
 
 	"""
 	updateIndex
@@ -72,7 +82,25 @@ class InvertedIndex:
 		- metadata: metadata to update a token 
 	"""
 	def updateIndex(self, token, metadata):
+		if metadata['documentID'] in self.indexstore[token]:
+
 		return None
+
+	"""
+	getStopwords
+
+	- returns a json list of the 50 most frequently occuring words
+	"""
+	def getStopwords(self):
+		
+		return None
+
+	def verifyJSON(self, document):
+		if not 'documentMetadata' in document:
+			return False
+		if not 'tokens' in document:
+			return False
+		return True
 
 
 # index = InvertedIndex()

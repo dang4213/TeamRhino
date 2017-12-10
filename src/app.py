@@ -6,16 +6,14 @@ app = Flask(__name__)
 tokenIndex = InvertedIndex()
 
 @app.route("/TeamRhino/add", methods=['GET', 'POST'])
-def add_ngrams():
+def add_tokens():
 	if not request.json:
 		abort(400)
-	tokenIndex.addMetadata(request.json)
-	return "Add successful!"
-
+	return tokenIndex.addMetadata(request.json)
 
 @app.route("/TeamRhino/stopwords", methods=['GET'])
 def get_stopwords():
-	return "List of stopwords"
+	return tokenIndex.getStopwords()
 
 @app.route("/TeamRhino/tokens", methods=['GET', 'POST'])
 def get_token_metadata():
