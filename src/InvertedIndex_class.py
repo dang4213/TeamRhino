@@ -196,8 +196,9 @@ class InvertedIndex:
 	return: json list
 	"""
 	def getStopwords(self):
-		s = sorted(self.indexstore.iteritems(), key=lambda(k, v) : v[0])
-		return s[:50]
+		s = sorted(self.indexstore.iteritems(),\
+			key=lambda(k, v) : v[0], reverse=True)
+		return json.dumps([token[0] for token in s[:50]])
 
 	"""
 	searchToken
