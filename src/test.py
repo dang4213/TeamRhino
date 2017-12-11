@@ -27,7 +27,7 @@ test_metadata1 = {
 
 test_metadata2 = {
 	'documentMetadata': {
-		'documentID': 'testfile2',
+		'documentID': 'testfile',
 		'wordCount': 50,
 	},
 	'tokens': [
@@ -54,15 +54,18 @@ test_metadata2 = {
 	]
 }
 
+test_search1 = {'tokens': ['hello', 'yeah', 'world']}
+
+# Test for rpi server
 # res = requests.post('http://teamrhino.cs.rpi.edu:5000/TeamRhino/add', \
 				   # json=test_metadata)
 
-res = requests.post('http://127.0.0.1:5000/TeamRhino/add', \
+res = requests.post('http://127.0.0.1:5000/TeamRhino/add',\
 					json = test_metadata1)
 
 print 'response from server:', res.text
 
-res = requests.post('http://127.0.0.1:5000/TeamRhino/add', \
+res = requests.post('http://127.0.0.1:5000/TeamRhino/add',\
 					json = test_metadata2)
 
 print 'response from server:', res.text
@@ -70,3 +73,14 @@ print 'response from server:', res.text
 res = requests.get('http://127.0.0.1:5000/TeamRhino/stopwords')
 
 print 'response from server: [%s]' %(' '.join(json.loads(res.text)))
+
+res = requests.post('http://127.0.0.1:5000/TeamRhino/tokens',\
+					json = test_search1)
+
+print 'response from server:', res.text
+
+res = requests.get('http://127.0.0.1:5000/TeamRhino/stopwords')
+
+print 'repsonse from server:', res.text
+
+

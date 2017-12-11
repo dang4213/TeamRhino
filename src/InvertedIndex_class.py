@@ -92,6 +92,8 @@ class InvertedIndex:
 		- docid, string
 
 	- iterates over tokens and adds/updates tokens to an index
+	- if a token is already associated to a docid, 
+	  then the token is updated
 	"""
 	def handleTokens(self, tokens, docid):
 		for info in tokens:
@@ -194,8 +196,8 @@ class InvertedIndex:
 	return: json list
 	"""
 	def getStopwords(self):
-
-		return None
+		s = sorted(self.indexstore.iteritems(), key=lambda(k, v) : v[0])
+		return s[:50]
 
 	"""
 	searchToken
