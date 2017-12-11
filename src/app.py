@@ -15,11 +15,7 @@ def add_tokens():
 
 @app.route("/TeamRhino/stopwords", methods=['GET'])
 def get_stopwords():
-	# return tokenIndex.getStopwords()
-	return jsonify(["the", "of", "to", "a", "and", "in", "said", "for", "that", "was",
-			"on", "he", "is", "with", "at", "by", "it", "from", "as", "be",
-			"were", "an", "have", "his", "but", "has", "are", "not", "who",
-			"they"])
+	return tokenIndex.getStopwords()
 
 @app.route("/TeamRhino/tokens", methods=['GET', 'POST'])
 def get_token_metadata():

@@ -72,15 +72,9 @@ print 'response from server:', res.text
 
 res = requests.get('http://127.0.0.1:5000/TeamRhino/stopwords')
 
-print 'response from server: [%s]' %(' '.join(json.loads(res.text)))
+print 'response from server:', res.text
 
 res = requests.post('http://127.0.0.1:5000/TeamRhino/tokens',\
 					json = test_search1)
 
 print 'response from server:', res.text
-
-res = requests.get('http://127.0.0.1:5000/TeamRhino/stopwords')
-
-print 'repsonse from server:', res.text
-
-
