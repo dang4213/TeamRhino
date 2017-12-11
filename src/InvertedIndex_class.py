@@ -19,7 +19,8 @@ class InvertedIndex:
 	def __init__(self):
 		self.indexstore = {}
 		self.stopwords = {}
-		self.documentstore = {}
+		self.documentMetadataStore = {}
+		self.documentTokenStore = {}
 
 	"""
 	addMetadata
@@ -57,10 +58,14 @@ class InvertedIndex:
 			return "Incorrect submission format"
 
 		self.handleDocument(document['documentMetadata'],\
-			document['documentMetadata']['documentID'],\
+			str(document['documentMetadata']['documentID']),\
 			timestamp)
 		self.handleTokens(document['tokens'],\
-			document['documentMetadata']['documentID'])
+			str(document['documentMetadata']['documentID']))
+
+		self.checkDeletions(\
+			{token['token'] for token in document['tokens']},\
+			str(document['documentMetadata']['documentID']))
 
 		return "Add Successful | indexed the following tokens:\
 			    \n%s" %(' \n'.join([t['token'] for t in \
@@ -76,7 +81,7 @@ class InvertedIndex:
 	- adds/updates a document to an index
 	"""
 	def handleDocument(self, metadata, docid, timestamp):
-		self.documentstore[docid] = (timestamp, metadata)
+		self.documentMetadataStore[docid] = (timestamp, metadata)
 
 
 	"""
@@ -99,6 +104,40 @@ class InvertedIndex:
 					self.createStore(info['locations'],\
 						docid)
 
+	"""
+	checkDeletions
+
+	params:
+		- tokens: set of strings
+		- docid: string
+
+	- iterates over the current self.documentTokenStore and compares vs
+	  tokens
+	- any non present tokens are updated (docid removed)
+	
+	return: none
+	"""
+	def checkDeletions(self, tokens, docid):
+		if docid in self.documentTokenStore:
+			for token in self.documentTokenStore[docid]:
+				if token not in tokens:
+					self.removeToken(token, docid)
+			self.documentTokenStore[docid] = tokens
+
+
+	"""
+	removeToken
+
+	params:
+		- token: string
+		- docid: string
+
+	- removes the document metadata from the token index
+
+	return: none
+	"""
+	def removeToken(self, token, docid):
+		return None
 
 	"""
 	createStore
@@ -110,22 +149,42 @@ class InvertedIndex:
 			associated
 	"""
 	def createStore(self, occurences, docid):
-		# self.documentstore[docid] = [timestamp, metadata]
-		# print numOccurences
-		return [occurences, docid]
+		return [len(occurences), {str(docid) : occurences}]
 
 	"""
 	updateIndex
 
 	params:
 		- token: string
-		- metadata: metadata to update a token 
-	"""
-	def updateToken(self, token, metadata, timestamp):
-		# if metadata['documentID'] in self.indexstore[token]:
+		- metadata: metadata to update a token
 
+	- updates the overall count and associated document IDs for a token
+	"""
+	def updateToken(self, token, occurences, docid):
+		if docid in self.indexstore[token][1]:
+			self.updateStore(token, occurences, docid)
+		else:
+			self.indexstore[token][1][str(docid)] = occurences
+			self.indexstore[token][0] += len(occurences)
 		return None
 
+	"""
+	updateStore
+
+	params:
+		- token: string
+		- occurences: list of ints
+		- docid: string
+
+	- removes the previous doc_count from a token's overall count
+	- adds the updated doc_count
+	"""
+	def updateStore(self, token, occurences, docid):
+		self.indexstore[token][0] -=\
+			len(self.indexstore[token][1][docid])
+		self.indexstore[token][0] += len(occurences)
+		self.indexstore[token][1][docid] = occurences
+		return None
 	"""
 	getStopwords
 	
@@ -185,12 +244,12 @@ class InvertedIndex:
 		search = {'returnCode': 0, 'error': "", \
 		          'documents': [], 'tokens': []}
 
-		for token in tokens:
+		for token in tokens['tokens']:
 			docinfo = self.findDocs(token)
-			indexinfo = {'token': token, ngramSize: len(token),\
+			indexinfo = {'token': token, 'ngramSize': len(token),\
 						 'documentOccurences': docinfo}
 			search['tokens'].append([indexinfo])
-		return None
+		return json.dumps(search)
 
 	"""
 	verifyJSON
@@ -221,6 +280,6 @@ class InvertedIndex:
 	"""
 	def findDocs(self, token):
 		ret = []
-		for doc in self.invertedindex[token][1:]:
+		for doc in self.indexstore[token][1:]:
 			ret.append(doc)
 		return ret
