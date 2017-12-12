@@ -1,7 +1,8 @@
 import requests
 import json
 import re
-import multiprocessing
+from os import listdir
+from os.path import isfile, join
 
 def cleanDocument(contents):
 	contents = re.sub('<script.+</script>', ' ', contents)
@@ -27,10 +28,10 @@ def createTestJSON(words, filename):
 	testjson = {
 		'documentMetadata': {
 			'documentID': filename,
-			'wordCount': len(word_locations)
+			'wordCount': len(locations)
 		},
 		'tokens': [{'token': token, 'ngramSize': len(token),
-					'locations': word_locations[token]} for token in locations.keys()]}
+					'locations': locations[token]} for token in locations.keys()]}
 	return testjson
 
 
@@ -48,7 +49,10 @@ for filename in files:
 
 	try:
 		res = requests.post('http://127.0.0.1:5000/TeamRhino/add', json=testjson)
+		print res.text
 
+		testjson = {'tokens': [word for word in words[:10]]}
+		res = requests.get('http://127.0.0.1:5000/TeamRhino/tokens', json=testjson)
 		print res.text
 
 		res = requests.get('http://127.0.0.1:5000/TeamRhino/stopwords')
