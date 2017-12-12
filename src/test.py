@@ -1,6 +1,7 @@
 import requests
 import json
 import re
+import multiprocessing
 
 def cleanDocument(contents):
 	contents = re.sub('<script.+</script>', ' ', contents)
@@ -11,13 +12,17 @@ def cleanDocument(contents):
 	contents = re.sub("(--|-)", ' ', contents).split()
 	return contents
 
-def createTestJSON(words, filename):
+def getLocations(words):
 	word_locations = {}
 	for index, word in enumerate(words):
 		if word in word_locations:
 			word_locations[word].append(index)
 		else:
 			word_locations[word] = [index]
+	return word_locations
+
+def createTestJSON(words, filename):
+	locations = getLocations(words)
 
 	testjson = {
 		'documentMetadata': {
@@ -25,7 +30,7 @@ def createTestJSON(words, filename):
 			'wordCount': len(word_locations)
 		},
 		'tokens': [{'token': token, 'ngramSize': len(token),
-					'locations': word_locations[token]} for token in word_locations.keys()]}
+					'locations': word_locations[token]} for token in locations.keys()]}
 	return testjson
 
 
@@ -42,8 +47,7 @@ for filename in files:
 	testjson = createTestJSON(words, files[0])
 
 	try:
-		res = requests.post('http://127.0.0.1:5000/TeamRhino/add', \
-				   json=testjson)
+		res = requests.post('http://127.0.0.1:5000/TeamRhino/add', json=testjson)
 
 		print res.text
 
