@@ -1,8 +1,6 @@
 import requests
 import json
 import re
-from os import listdir
-from os.path import isfile, join
 
 def cleanDocument(contents):
 	contents = re.sub('<script.+</script>', ' ', contents)
@@ -44,7 +42,6 @@ for filename in files:
 	testjson = createTestJSON(words, files[0])
 
 	try:
-		print "hello"
 		res = requests.post('http://127.0.0.1:5000/TeamRhino/add', \
 				   json=testjson)
 
