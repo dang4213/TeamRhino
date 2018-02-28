@@ -7,8 +7,8 @@ app = Flask(__name__)
 tokenIndex = InvertedIndex()
 
 
-@app.route("/TeamRhino/add", methods=['GET', 'POST'])
-def add_tokens():
+@app.route("/TeamRhino/newTokens", methods=['GET', 'POST'])
+def new_tokens():
 
     t = time.time()
     if not request.json:
